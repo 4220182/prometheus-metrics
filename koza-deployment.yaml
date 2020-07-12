@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: koza
+  labels:
+    app: koza
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: koza
+  template:
+    metadata:
+      labels:
+        app: koza
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9100"
+    spec:
+      containers:
+      - name: koza
+        image: koza/prometheus-metrics:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        - containerPort: 9100

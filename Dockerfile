@@ -1,16 +1,14 @@
-FROM python
+FROM python:3.7-alpine
 
-RUN apt-get update
+COPY requirements.txt /requirements.txt
 
+RUN pip install -r /requirements.txt && rm -rf .cache/pip
 
-#安装flask prometheus_client 库
-RUN pip install flask prometheus_client
+ENV app /app
+WORKDIR ${app}
+ADD ./myWebServer.py $app
 
-# Install source files
-COPY /start.py /start.py
-WORKDIR /
-EXPOSE 5000
+EXPOSE 8080
+EXPOSE 9100
 
-ENTRYPOINT []
-CMD ["python", "start.py"]
-
+CMD ["python3", "myWebServer.py"]

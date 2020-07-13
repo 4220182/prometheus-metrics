@@ -15,7 +15,7 @@ from wsgiref.simple_server import make_server
 # 不减少，程序重启的时候会被重新设置为0，构造函数第一个参数是定义 指标名称，
 # 第二个是定义HELP中显示的内容，都属于文本
 # 第三个参数是标签列表，也就是给这个指标加labels，这个也可以不设置
-http_requests_total = Counter("http_requests", "Total request count of the host", ['method', 'endpoint'])
+http_requests_total = Counter("http_requests", "Total request count of the host", ['code', 'method', 'endpoint'])
 
 # Summary类型，它可以统计2个时间
 # request_processing_seconds_count 该函数被调用的数量
@@ -37,7 +37,7 @@ def process_request():
     # 下面这种写法就是为这个指标加上标签，但是这里的method和endpoint
     # 都在Counter初始化的时候放进去的。
     # 你想统计那个ULR的访问量就把这个放在哪里
-    http_requests_total.labels(method="get", endpoint="/").inc()
+    http_requests_total.labels(code="200", method="get", endpoint="/").inc()
     return jsonify({"return": "success OK!"})
 
 

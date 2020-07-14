@@ -9,12 +9,24 @@ docker方式运行：
 docker run --rm -p 8080:8080 -p 9100:9100  -it koza/prometheus-metrics:latest
 ```
 
-访问页面，让计数器+1：
+response 200 响应码：
 http://127.0.0.1:8080/
 
+response 301 响应码：
+http://127.0.0.1:8080/301
+
+response 429 响应码：
+http://127.0.0.1:8080/429
+
+response 503 响应码：
+http://127.0.0.1:8080/503
+
+访问healthy：
+http://127.0.0.1:8080/healthy
 
 访问metrics：
 http://127.0.0.1:9100/metrics
+
 
 返回 metrics：
 ```

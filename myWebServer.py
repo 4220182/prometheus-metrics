@@ -41,6 +41,29 @@ def process_request():
     return jsonify({"return": "success OK!"})
 
 
+@app.route("/301")
+def process_request_301():
+    time.sleep(random.random())
+    http_requests_total.labels(code="301", method="get", endpoint="/301").inc()
+    return jsonify({"return": "response 301!"}), 301, {"Content-Type":"application/text"}
+
+@app.route("/429")
+def process_request_429():
+    time.sleep(random.random())
+    http_requests_total.labels(code="429", method="get", endpoint="/429").inc()
+    return jsonify({"return": "response 429!"}), 429, {"Content-Type":"application/text"}
+
+@app.route("/503")
+def process_request_503():
+    time.sleep(random.random())
+    http_requests_total.labels(code="503", method="get", endpoint="/503").inc()
+    return jsonify({"return": "response 503!"}), 503, {"Content-Type":"application/text"}
+
+# 这个是健康检查用的
+@app.route('/healthy')
+def healthy():
+    return "healthy"
+
 if __name__ == '__main__':
     # Start up the server to expose the metrics.
     start_http_server(9100)
@@ -51,5 +74,11 @@ if __name__ == '__main__':
         8080,  # A port number where to wait for the request.
         app  # Our application object name, in this case a function.
     )
-    print("started. url: 0.0.0.0:8080/test1, metrics: 0.0.0.0:9100/metrics")
+    print("started.\n"
+          "url: 0.0.0.0:8080/\n"
+          "response 301: 0.0.0.0:8080/301\n"
+          "response 429: 0.0.0.0:8080/429\n"
+          "response 503: 0.0.0.0:8080/503\n"
+          "metrics: 0.0.0.0:9100/metrics\n"
+          "healthy: 0.0.0.0:9100/healthy")
     httpd.serve_forever()

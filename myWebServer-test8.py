@@ -40,12 +40,11 @@ def process_request():
     http_requests_total.labels(code="200", method="get", endpoint="/").inc()
     return jsonify({"return": "success OK!"})
 
-
 @app.route("/301")
 def process_request_301():
     time.sleep(random.random())
     http_requests_total.labels(code="301", method="get", endpoint="/301").inc()
-    return jsonify({"return": "response 301!"}), 301, {"Content-Type":"application/text"}
+    return jsonify({"return": "response 301!"}), 302, {"Content-Type":"application/text","location":"/"}
 
 @app.route("/429")
 def process_request_429():

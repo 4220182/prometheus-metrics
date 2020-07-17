@@ -4,6 +4,9 @@
 """
 使用python内置WSGI server: wsgiref ,考虑性能问题你也可以使用其他WSGI server
 WSGI server用了gevent, eventlet等 green thread技术，就可以支持更多并发。
+参考：
+设置页面header Content-Type：https://stackoverflow.com/questions/11773348/python-flask-how-to-set-content-type
+
 """
 from prometheus_client import start_http_server, Counter, Summary
 import random

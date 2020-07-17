@@ -8,7 +8,7 @@ WSGI server用了gevent, eventlet等 green thread技术，就可以支持更多�
 from prometheus_client import start_http_server, Counter, Summary
 import random
 import time
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from wsgiref.simple_server import make_server
 
 # 定义一个Counter类型的变量，这个变量不是指标名称，这种Counter类型只增加
@@ -28,24 +28,38 @@ app = Flask(__name__)
 @app.route("/")
 @request_time.time() # 这个必须要放在app.route的下面
 def process_request():
-
-    # 这里设置0-1之间随机数用于模拟页面响应时长
     time.sleep(random.random())
+    http_requests_total.labels(code="302", method="get", endpoint="/").inc()
+    return jsonify({"return": "response 302!"}), 302, {"Content-Type": "application/text", "location": "/app"}
 
-    # .inc()表示增加，默认是加1，你可以设置为加1.5，比如.inc(1.5)
-    # http_requests_total.inc()
-    # 下面这种写法就是为这个指标加上标签，但是这里的method和endpoint
-    # 都在Counter初始化的时候放进去的。
-    # 你想统计那个ULR的访问量就把这个放在哪里
-    http_requests_total.labels(code="200", method="get", endpoint="/").inc()
-    return jsonify({"return": "success OK!"})
+# desc
+@app.route("/app")
+@request_time.time() # 这个必须要放在app.route的下面
+def process_request_app():
+    time.sleep(random.random())
+    http_requests_total.labels(code="302", method="get", endpoint="/app").inc()
+    return render_template('app.html')
+
+# desc
+@app.route("/hello")
+@request_time.time() # 这个必须要放在app.route的下面
+def process_request_hello():
+    time.sleep(random.random())
+    http_requests_total.labels(code="200", method="get", endpoint="/hello").inc()
+    return jsonify({"return": "hello OK!"})
 
 
 @app.route("/301")
 def process_request_301():
     time.sleep(random.random())
     http_requests_total.labels(code="301", method="get", endpoint="/301").inc()
-    return jsonify({"return": "response 301!"}), 301, {"Content-Type":"application/text"}
+    return jsonify({"return": "response 301!"}), 301, {"Content-Type":"application/text","location":"/"}
+
+@app.route("/302")
+def process_request_302():
+    time.sleep(random.random())
+    http_requests_total.labels(code="301", method="get", endpoint="/302").inc()
+    return jsonify({"return": "response 301!"}), 302, {"Content-Type":"application/text","location":"/"}
 
 @app.route("/429")
 def process_request_429():

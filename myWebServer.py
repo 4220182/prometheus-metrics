@@ -12,7 +12,6 @@ from prometheus_client import start_http_server, Counter, Summary
 import random
 import time
 from flask import Flask, jsonify
-from wsgiref.simple_server import make_server
 
 # 定义一个Counter类型的变量，这个变量不是指标名称，这种Counter类型只增加
 # 不减少，程序重启的时候会被重新设置为0，构造函数第一个参数是定义 指标名称，
@@ -70,13 +69,6 @@ def healthy():
 if __name__ == '__main__':
     # Start up the server to expose the metrics.
     start_http_server(9100)
-    # Generate some requests.
-
-    httpd = make_server(
-        '0.0.0.0',  # The host name.
-        8080,  # A port number where to wait for the request.
-        app  # Our application object name, in this case a function.
-    )
     print("started.\n"
           "url: 0.0.0.0:8080/\n"
           "response 301: 0.0.0.0:8080/301\n"
@@ -84,4 +76,4 @@ if __name__ == '__main__':
           "response 503: 0.0.0.0:8080/503\n"
           "metrics: 0.0.0.0:9100/metrics\n"
           "healthy: 0.0.0.0:9100/healthy")
-    httpd.serve_forever()
+    app.run(host="0.0.0.0",port=8080)
